@@ -6,6 +6,7 @@ import (
 	"github.com/fatih/structs"
 	"github.com/huandu/xstrings"
 	"reflect"
+	"strings"
 )
 
 // KeyCase represenets the word case of the output keys
