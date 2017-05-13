@@ -211,6 +211,7 @@ func (b *Base) PickFuncIf(p Predicate, converter ValueConverter, keys ...string)
 	b.modifiers = append(b.modifiers, func(m jsonMap) jsonMap {
 		if p(b.raw) {
 			for _, key := range keys {
+				fmt.Println("key:" + key)
 				m[key] = converter(b.reflected.FieldByName(key).Interface())
 			}
 		}
