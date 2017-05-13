@@ -212,6 +212,10 @@ func (b *Base) PickFuncIf(p Predicate, converter ValueConverter, keys ...string)
 		if p(b.raw) {
 			for _, key := range keys {
 				fmt.Println("key:" + key)
+				splits := strings.Split(key, ".")
+				for i := range splits {
+					fmt.Println(splits[i])
+				}
 				m[key] = converter(b.reflected.FieldByName(key).Interface())
 			}
 		}
