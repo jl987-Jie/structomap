@@ -213,16 +213,46 @@ func (b *Base) PickFuncIf(p Predicate, converter ValueConverter, keys ...string)
 		if p(b.raw) {
 			for _, key := range keys {
 				fmt.Println("key:" + key)
-				splits := strings.Split(key, ".")
+				splits := strings.Split(key, ",")
+				curVal := b.reflected.FieldByName("MedlineCitation")
 				for i := range splits {
-					fmt.Println(splits[i])
+					curVal = curVal.FieldByName(splits[i])
+					fmt.Println(curVal)
 				}
-				m[key] = converter(b.reflected.FieldByName(key).Interface())
+				//fmt.Println(b.reflected.FieldByName(key).FieldByName("PMID").FieldByName("Value"))
+				//fmt.Println(converter(b.reflected.FieldByName(key).Interface()))
+				// m[key] = converter(b.reflected.FieldByName(key).Interface())
+				m["Article"] = curVal.Interface()
+				m["PMID"] = curVal.Interface()
 			}
 		}
-		return m
+		var g jsonMap = make(map[string]interface{})
+		g["MedlineCitation"] = m
+		var h jsonMap = make(map[string]interface{})
+		h["PubMedArticle"] = g
+		return h
 	})
+	fmt.Println(b)
 	return b
+}
+
+func DeepFields(iface interface{}) []reflect.Value {
+    fields := make([]reflect.Value, 0)
+    ifv := reflect.ValueOf(iface)
+    ift := reflect.TypeOf(iface)
+
+    for i := 0; i < ift.NumField(); i++ {
+        v := ifv.Field(i)
+
+        switch v.Kind() {
+        case reflect.Struct:
+            fields = append(fields, DeepFields(v.Interface())...)
+        default:
+            fields = append(fields, v)
+        }
+    }
+
+    return fields
 }
 
 // Omit omits the given fields from the result
